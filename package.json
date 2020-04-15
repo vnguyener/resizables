@@ -1,0 +1,12 @@
+{
+  "name": "resizables",
+  "version": "1.0.0",
+  "description": "react component that make the children resizable by dragging  (by width)",
+  "main": "index.js",
+  "author": "Vu Nguyen <hello.vunguyen@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "prop-types": "^15.7.2",
+    "react": "^16.13.1"
+  }
+}
