@@ -2,15 +2,24 @@
   "name": "resizables",
   "version": "1.0.0",
   "description": "react component that make the children resizable by dragging  (by width)",
-  "main": "index.js",
+  "main": "dist/main.js",
   "author": "Vu Nguyen <hello.vunguyen@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "build": "webpack --mode production"
+  },
   "dependencies": {
     "prop-types": "^15.7.2",
     "react": "^16.13.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/preset-react": "^7.9.4",
+    "babel-loader": "^8.1.0",
     "flow-bin": "^0.123.0",
-    "flow-typed": "^3.1.0"
+    "flow-typed": "^3.1.0",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
   }
 }
