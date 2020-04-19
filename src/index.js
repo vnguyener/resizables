@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import PropTypes from "prop-types";
 
+import "./style.css";
+
 const ResizablePanels = ({
   children,
-  key, // key used mainly for local storage if we have multiple resizable uses
+  uniqKey, // uniqKey used mainly for local storage if we have multiple resizable uses
   showResizable, // condition to show or hide resizables or not
   hideInitial, // if we want to hide the first child on init
   onResize, // callback on resize
@@ -34,9 +36,9 @@ const ResizablePanels = ({
             setIsDragging(false);
             setDelta(0);
             setCurrentPanel(0);
-            if (key != "") {
+            if (uniqKey !== "") {
                 localStorage.setItem(
-                    key,
+                    uniqKey,
                     JSON.stringify({
                         ...panels,
                         [currentPanel]: (panels[currentPanel] || 0) - delta,
@@ -50,12 +52,12 @@ const ResizablePanels = ({
                 });
             }
         }
-    }, [currentPanel, delta, key, isDragging, onResize, panels]);
+    }, [currentPanel, delta, uniqKey, isDragging, onResize, panels]);
 
     const resizePanel = useCallback(
         event => {
             if (isDragging) {
-                const delta = (event.clientX /  (document && document.documentElement ? document.documentElement.clientWidth : 1)) * 100 - initialPos;
+                const delta = (event.clientX / (document && document.documentElement ? document.documentElement.clientWidth : 1)) * 100 - initialPos;
                 setDelta(delta);
             }
         },
@@ -64,10 +66,10 @@ const ResizablePanels = ({
 
     useEffect(() => {
         const currentRef = resizableRef.current;
-        if (currentRef) {
-            currentRef.addEventListener("mousemove", resizePanel);
-            currentRef.addEventListener("mouseup", stopResize);
-            currentRef.addEventListener("mouseleave", stopResize);
+        if (resizableRef.current) {
+          resizableRef.current.addEventListener("mouseup", stopResize);
+          resizableRef.current.addEventListener("mouseleave", stopResize);
+          resizableRef.current.addEventListener("mousemove", resizePanel);
         }
 
         return () => {
@@ -80,8 +82,8 @@ const ResizablePanels = ({
     }, [resizePanel, stopResize, resizableRef]);
 
     useEffect(() => {
-        if (key != "") {
-            const storedPanelWidths = localStorage.getItem(key);
+        if (uniqKey !== "") {
+            const storedPanelWidths = localStorage.getItem(uniqKey);
             if (storedPanelWidths && showResizable) {
                 setPanels(JSON.parse(storedPanelWidths));
                 onResize(JSON.parse(storedPanelWidths));
@@ -89,7 +91,7 @@ const ResizablePanels = ({
                 setPanels({ '0': 74, '1': 74, '2': 74 });
             }
         }
-    }, [key, onResize, setPanels, showResizable]);
+    }, [uniqKey, onResize, setPanels, showResizable]);
 
 
     return (
@@ -97,7 +99,8 @@ const ResizablePanels = ({
             <div
                 ref={resizableRef.current}
                 className={`panel-container ${className ? className : ""}`}
-                onMouseUp={() => stopResize()}
+                onMouseUp={stopResize}
+                onMouseMove={resizePanel}
             >
                 <div className="panel" style={!hideInitial ? { width: `calc(100% - ${panels[1]}vw)` } : { width: 0 }}>
                     {children[0]}
@@ -162,9 +165,8 @@ ResizablePanels.propTypes = {
     children: PropTypes.any,
     showResizable: PropTypes.bool,
     hideInitial: PropTypes.bool,
-    key: PropTypes.string,
+    uniqKey: PropTypes.string,
     onResize: PropTypes.func,
-    key: PropTypes.any,
     className: PropTypes.string,
 };
 

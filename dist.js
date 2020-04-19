@@ -11,7 +11,7 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _propTypes = _interopRequireDefault(require("prop-types"));
 
-var _ResizablePanels$prop;
+require("./style.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -49,7 +49,7 @@ var ResizablePanels = function ResizablePanels(_ref) {
   var _ref2;
 
   var children = _ref.children,
-      key = _ref.key,
+      uniqKey = _ref.uniqKey,
       showResizable = _ref.showResizable,
       hideInitial = _ref.hideInitial,
       onResize = _ref.onResize,
@@ -100,14 +100,14 @@ var ResizablePanels = function ResizablePanels(_ref) {
       setDelta(0);
       setCurrentPanel(0);
 
-      if (key != "") {
+      if (uniqKey !== "") {
         var _objectSpread3, _objectSpread4;
 
-        localStorage.setItem(key, JSON.stringify(_objectSpread({}, panels, (_objectSpread3 = {}, _defineProperty(_objectSpread3, currentPanel, (panels[currentPanel] || 0) - delta), _defineProperty(_objectSpread3, currentPanel - 1, (panels[currentPanel - 1] || 0) + delta), _objectSpread3))));
+        localStorage.setItem(uniqKey, JSON.stringify(_objectSpread({}, panels, (_objectSpread3 = {}, _defineProperty(_objectSpread3, currentPanel, (panels[currentPanel] || 0) - delta), _defineProperty(_objectSpread3, currentPanel - 1, (panels[currentPanel - 1] || 0) + delta), _objectSpread3))));
         onResize(_objectSpread({}, panels, (_objectSpread4 = {}, _defineProperty(_objectSpread4, currentPanel, (panels[currentPanel] || 0) - delta), _defineProperty(_objectSpread4, currentPanel - 1, (panels[currentPanel - 1] || 0) + delta), _objectSpread4)));
       }
     }
-  }, [currentPanel, delta, key, isDragging, onResize, panels]);
+  }, [currentPanel, delta, uniqKey, isDragging, onResize, panels]);
   var resizePanel = (0, _react.useCallback)(function (event) {
     if (isDragging) {
       var _delta = event.clientX / (document && document.documentElement ? document.documentElement.clientWidth : 1) * 100 - initialPos;
@@ -118,10 +118,10 @@ var ResizablePanels = function ResizablePanels(_ref) {
   (0, _react.useEffect)(function () {
     var currentRef = resizableRef.current;
 
-    if (currentRef) {
-      currentRef.addEventListener("mousemove", resizePanel);
-      currentRef.addEventListener("mouseup", stopResize);
-      currentRef.addEventListener("mouseleave", stopResize);
+    if (resizableRef.current) {
+      resizableRef.current.addEventListener("mouseup", stopResize);
+      resizableRef.current.addEventListener("mouseleave", stopResize);
+      resizableRef.current.addEventListener("mousemove", resizePanel);
     }
 
     return function () {
@@ -133,8 +133,8 @@ var ResizablePanels = function ResizablePanels(_ref) {
     };
   }, [resizePanel, stopResize, resizableRef]);
   (0, _react.useEffect)(function () {
-    if (key != "") {
-      var storedPanelWidths = localStorage.getItem(key);
+    if (uniqKey !== "") {
+      var storedPanelWidths = localStorage.getItem(uniqKey);
 
       if (storedPanelWidths && showResizable) {
         setPanels(JSON.parse(storedPanelWidths));
@@ -147,13 +147,12 @@ var ResizablePanels = function ResizablePanels(_ref) {
         });
       }
     }
-  }, [key, onResize, setPanels, showResizable]);
+  }, [uniqKey, onResize, setPanels, showResizable]);
   return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, /*#__PURE__*/_react["default"].createElement("div", {
     ref: resizableRef.current,
     className: "panel-container ".concat(className ? className : ""),
-    onMouseUp: function onMouseUp() {
-      return stopResize();
-    }
+    onMouseUp: stopResize,
+    onMouseMove: resizePanel
   }, /*#__PURE__*/_react["default"].createElement("div", {
     className: "panel",
     style: !hideInitial ? {
@@ -222,12 +221,13 @@ var ResizablePanels = function ResizablePanels(_ref) {
   })))));
 };
 
-ResizablePanels.propTypes = (_ResizablePanels$prop = {
+ResizablePanels.propTypes = {
   children: _propTypes["default"].any,
   showResizable: _propTypes["default"].bool,
   hideInitial: _propTypes["default"].bool,
-  key: _propTypes["default"].string,
-  onResize: _propTypes["default"].func
-}, _defineProperty(_ResizablePanels$prop, "key", _propTypes["default"].any), _defineProperty(_ResizablePanels$prop, "className", _propTypes["default"].string), _ResizablePanels$prop);
+  uniqKey: _propTypes["default"].string,
+  onResize: _propTypes["default"].func,
+  className: _propTypes["default"].string
+};
 var _default = ResizablePanels;
 exports["default"] = _default;

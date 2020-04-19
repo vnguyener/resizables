@@ -1,0 +1,43 @@
+.panel-container {
+  display: flex;
+  height: 100vh;
+}
+
+.panel-container .panel {
+  margin-bottom: 0px;
+  background-color: #FFF;
+  border: 0px solid transparent;
+  border-radius: 6px;
+  box-shadow: 0px;
+  display: flex;
+  max-width: 100vw;
+  transition: width 0.5s;
+}
+
+.resizer {
+  width: 8px;
+  background: darkgray;
+  position: relative;
+  cursor: col-resize;
+  flex-shrink: 0;
+  user-select: none;
+  z-index: 120;
+}
+
+.resizer::after, .resizer::before {
+  content: "";
+  border-left: 1px solid #333;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-100%);
+  right: 0px;
+  display: inline-block;
+  height: 20px;
+  margin: 0 -2px;
+}
+
+.resizer::before {
+  left: 0px
+}
+
+
