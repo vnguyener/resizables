@@ -1,4 +1,3 @@
-// @flow
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import PropTypes from "prop-types";
 
@@ -9,7 +8,7 @@ const ResizablePanels = ({
   hideInitial, // if we want to hide the first child on init
   onResize, // callback on resize
   className
-} : any) => {
+}) => {
     const resizableRef = useRef();
 
     const [isDragging, setIsDragging] = useState(false);
