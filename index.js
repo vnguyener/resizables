@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
+// @flow
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import PropTypes from "prop-types";
 
 const ResizablePanels = ({
@@ -8,45 +9,20 @@ const ResizablePanels = ({
   hideInitial, // if we want to hide the first child on init
   onResize, // callback on resize
   className
-}) => {
-    const resizableRef = React.createRef();
+} : any) => {
+    const resizableRef = useRef();
 
     const [isDragging, setIsDragging] = useState(false);
-    const [panels, setPanels] = useState([74, 74, 74]);
-    const [delta, setDelta] = useState(null);
+    const [panels, setPanels] = useState({ '0': 74, '1': 74, '2': 74 });
+    const [delta, setDelta] = useState(0);
     const [currentPanel, setCurrentPanel] = useState(0);
-    const [initialPos, setInitialPos] = useState(null);
+    const [initialPos, setInitialPos] = useState(0);
     const rest = children.slice(1);
-
-    useEffect(() => {
-        const currentRef = resizableRef.current;
-        resizableRef.current.addEventListener("mousemove", resizePanel);
-        resizableRef.current.addEventListener("mouseup", stopResize);
-        resizableRef.current.addEventListener("mouseleave", stopResize);
-
-        return () => {
-            currentRef.removeEventListener("mousemove", resizePanel);
-            currentRef.removeEventListener("mouseup", stopResize);
-            currentRef.removeEventListener("mouseleave", stopResize);
-        };
-    }, [resizePanel, stopResize, resizableRef]);
-
-    useEffect(() => {
-        if (key != "") {
-            const storedPanelWidths = localStorage.getItem(key);
-            if (storedPanelWidths && showResizable) {
-                setPanels(JSON.parse(storedPanelWidths));
-                onResize(JSON.parse(storedPanelWidths));
-            } else {
-                setPanels([74, 74, 74]);
-            }
-        }
-    }, [key, onResize, setPanels, showResizable]);
 
     const startResize = useCallback((event, index) => {
         setIsDragging(true);
         setCurrentPanel(index);
-        setInitialPos((event.clientX / document.documentElement.clientWidth) * 100);
+        setInitialPos((event.clientX / (document && document.documentElement ? document.documentElement.clientWidth : 1)) * 100);
     }, []);
 
     // magic don't touch - vu
@@ -81,16 +57,46 @@ const ResizablePanels = ({
     const resizePanel = useCallback(
         event => {
             if (isDragging) {
-                const delta = (event.clientX / document.documentElement.clientWidth) * 100 - initialPos;
+                const delta = (event.clientX /  (document && document.documentElement ? document.documentElement.clientWidth : 1)) * 100 - initialPos;
                 setDelta(delta);
             }
         },
         [initialPos, isDragging]
     );
 
+    useEffect(() => {
+        const currentRef = resizableRef.current;
+        if (currentRef) {
+            currentRef.addEventListener("mousemove", resizePanel);
+            currentRef.addEventListener("mouseup", stopResize);
+            currentRef.addEventListener("mouseleave", stopResize);
+        }
+
+        return () => {
+            if (currentRef) {
+                currentRef.removeEventListener("mousemove", resizePanel);
+                currentRef.removeEventListener("mouseup", stopResize);
+                currentRef.removeEventListener("mouseleave", stopResize);
+            }
+        };
+    }, [resizePanel, stopResize, resizableRef]);
+
+    useEffect(() => {
+        if (key != "") {
+            const storedPanelWidths = localStorage.getItem(key);
+            if (storedPanelWidths && showResizable) {
+                setPanels(JSON.parse(storedPanelWidths));
+                onResize(JSON.parse(storedPanelWidths));
+            } else {
+                setPanels({ '0': 74, '1': 74, '2': 74 });
+            }
+        }
+    }, [key, onResize, setPanels, showResizable]);
+
+
     return (
         <div
-            ref={resizableRef}
+            ref={resizableRef.current}
             className={`panel-container ${className ? className : ""}`}
             onMouseUp={() => stopResize()}
         >
