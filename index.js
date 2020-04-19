@@ -25,7 +25,6 @@ const ResizablePanels = ({
         setInitialPos((event.clientX / (document && document.documentElement ? document.documentElement.clientWidth : 1)) * 100);
     }, []);
 
-    // magic don't touch - vu
     const stopResize = useCallback(() => {
         if (isDragging) {
             setPanels({
@@ -95,19 +94,36 @@ const ResizablePanels = ({
 
 
     return (
-        <div
-            ref={resizableRef.current}
-            className={`panel-container ${className ? className : ""}`}
-            onMouseUp={() => stopResize()}
-        >
-            <div className="panel" style={!hideInitial ? { width: `calc(100% - ${panels[1]}vw)` } : { width: 0 }}>
-                {children[0]}
-            </div>
-            {[].concat(
-                ...rest.map((child, i) => {
-                    if (rest.length - 1 === i) {
-                        if (!showResizable) {
+        <>
+            <div
+                ref={resizableRef.current}
+                className={`panel-container ${className ? className : ""}`}
+                onMouseUp={() => stopResize()}
+            >
+                <div className="panel" style={!hideInitial ? { width: `calc(100% - ${panels[1]}vw)` } : { width: 0 }}>
+                    {children[0]}
+                </div>
+                {[].concat(
+                    ...rest.map((child, i) => {
+                        if (rest.length - 1 === i) {
+                            if (!showResizable) {
+                                return [
+                                    <div
+                                        key={"panel_" + i}
+                                        className="panel"
+                                        style={{ width: `${panels[i + 1]}vw`, flex: "1 1 0%" }}
+                                    >
+                                        {child}
+                                    </div>,
+                                ];
+                            }
                             return [
+                                <div
+                                    onMouseDown={e => startResize(e, i + 1)}
+                                    key={"resizer_" + i}
+                                    style={currentPanel === i + 1 ? { left: delta } : {}}
+                                    className="resizer"
+                                />,
                                 <div
                                     key={"panel_" + i}
                                     className="panel"
@@ -116,45 +132,30 @@ const ResizablePanels = ({
                                     {child}
                                 </div>,
                             ];
-                        }
-                        return [
-                            <div
-                                onMouseDown={e => startResize(e, i + 1)}
-                                key={"resizer_" + i}
-                                style={currentPanel === i + 1 ? { left: delta } : {}}
-                                className="resizer"
-                            />,
-                            <div
-                                key={"panel_" + i}
-                                className="panel"
-                                style={{ width: `${panels[i + 1]}vw`, flex: "1 1 0%" }}
-                            >
-                                {child}
-                            </div>,
-                        ];
-                    } else {
-                        if (!showResizable) {
+                        } else {
+                            if (!showResizable) {
+                                return [
+                                    <div key={"panel_" + i} className="panel" style={{ width: panels[i + 1] }}>
+                                        {child}
+                                    </div>,
+                                ];
+                            }
                             return [
-                                <div key={"panel_" + i} className="panel" style={{ width: panels[i + 1] }}>
+                                <div
+                                    onMouseDown={e => startResize(e, i + 1)}
+                                    key={"resizer_" + i}
+                                    style={currentPanel === i + 1 ? { left: delta } : {}}
+                                    className="resizer"
+                                />,
+                                <div key={"panel_" + i} className="panel" style={{ width: `${panels[i + 1]}vw` }}>
                                     {child}
                                 </div>,
                             ];
                         }
-                        return [
-                            <div
-                                onMouseDown={e => startResize(e, i + 1)}
-                                key={"resizer_" + i}
-                                style={currentPanel === i + 1 ? { left: delta } : {}}
-                                className="resizer"
-                            />,
-                            <div key={"panel_" + i} className="panel" style={{ width: `${panels[i + 1]}vw` }}>
-                                {child}
-                            </div>,
-                        ];
-                    }
-                })
-            )}
-        </div>
+                    })
+                )}
+            </div>
+        </>
     );
 };
 
