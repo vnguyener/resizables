@@ -37,7 +37,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
@@ -95,7 +95,7 @@ var ResizablePanels = function ResizablePanels(_ref) {
     if (isDragging) {
       var _objectSpread2;
 
-      setPanels(_objectSpread({}, panels, (_objectSpread2 = {}, _defineProperty(_objectSpread2, currentPanel, (panels[currentPanel] || 0) - delta), _defineProperty(_objectSpread2, currentPanel - 1, (panels[currentPanel - 1] || 0) + delta), _objectSpread2)));
+      setPanels(_objectSpread(_objectSpread({}, panels), {}, (_objectSpread2 = {}, _defineProperty(_objectSpread2, currentPanel, (panels[currentPanel] || 0) - delta), _defineProperty(_objectSpread2, currentPanel - 1, (panels[currentPanel - 1] || 0) + delta), _objectSpread2)));
       setIsDragging(false);
       setDelta(0);
       setCurrentPanel(0);
@@ -103,8 +103,8 @@ var ResizablePanels = function ResizablePanels(_ref) {
       if (uniqKey !== "") {
         var _objectSpread3, _objectSpread4;
 
-        localStorage.setItem(uniqKey, JSON.stringify(_objectSpread({}, panels, (_objectSpread3 = {}, _defineProperty(_objectSpread3, currentPanel, (panels[currentPanel] || 0) - delta), _defineProperty(_objectSpread3, currentPanel - 1, (panels[currentPanel - 1] || 0) + delta), _objectSpread3))));
-        onResize(_objectSpread({}, panels, (_objectSpread4 = {}, _defineProperty(_objectSpread4, currentPanel, (panels[currentPanel] || 0) - delta), _defineProperty(_objectSpread4, currentPanel - 1, (panels[currentPanel - 1] || 0) + delta), _objectSpread4)));
+        localStorage.setItem(uniqKey, JSON.stringify(_objectSpread(_objectSpread({}, panels), {}, (_objectSpread3 = {}, _defineProperty(_objectSpread3, currentPanel, (panels[currentPanel] || 0) - delta), _defineProperty(_objectSpread3, currentPanel - 1, (panels[currentPanel - 1] || 0) + delta), _objectSpread3))));
+        onResize(_objectSpread(_objectSpread({}, panels), {}, (_objectSpread4 = {}, _defineProperty(_objectSpread4, currentPanel, (panels[currentPanel] || 0) - delta), _defineProperty(_objectSpread4, currentPanel - 1, (panels[currentPanel - 1] || 0) + delta), _objectSpread4)));
       }
     }
   }, [currentPanel, delta, uniqKey, isDragging, onResize, panels]);
